@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Prefabs/Scenes/SampleScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    path: Assets/Prefabs/Scenes/StartScene.unity
+    guid: 653d7e8d2546c304a80dee7d47b51791
   - enabled: 1
     path: Assets/Prefabs/Scenes/GrowingScene.unity
     guid: 15a43eeba9daded429618d2b827fc1dd

@@ -31,7 +31,7 @@ public class GrowingUI : MonoBehaviour
     public TextMeshProUGUI[] coinTexts;  // 코인 관련 텍스트
     public TextMeshProUGUI[] foodTexts;  // 음식 관련 텍스트
 
-    public TeuniInven TeuniInven;
+    //public TeuniInven TeuniInven;
 
     public UnityEngine.UI.Slider TeuniHPSlider;
 
@@ -61,8 +61,7 @@ public class GrowingUI : MonoBehaviour
     private string[] TutorialText = { "이곳에서는 트니를 먹일 수 있어요.", "트니가 더러워지면 이곳에서 트니를 씻겨봐요."};
     private string[] popupText = {"냉장고에서 트니에게 줄 음식을 선택하세요", "돈이 부족합니다!", "음식이 부족합니다!" };
 
-    public string FoodColor;
-
+    //public string FoodColor;
     public Text DebugText;
 
     // Start is called before the first frame update
@@ -105,37 +104,30 @@ public class GrowingUI : MonoBehaviour
         // 원래 위치 저장
         originalPosition = feedButton.transform.position;
 
-        TeuniInven.ResetData();
-        TeuniHPSlider.value = (float)TeuniInven.hp / (float)TeuniInven.MaxHp;
-        Debug.Log(TeuniInven.hp);
-        Debug.Log(TeuniInven.MaxHp);
-        Debug.Log((float)TeuniInven.hp / (float)TeuniInven.MaxHp);
+        TeuniHPSlider.value = (float)TeuniManager.Instance.Hp / (float)TeuniManager.Instance.MaxHp;
+        Debug.Log(TeuniManager.Instance.Hp);
         Debug.Log(TeuniHPSlider.value);
-        //UpdateSlider(TeuniInven.hp);
-    }
 
-    /*
-    void Update()
-    {
-        // 터치로 AR 오브젝트 이동
-        if (Input.touchCount > 0 && spawnedObject != null)
+        TeuniManager.Instance.HPChanged += UpdateSlider;
+
+        
+        if (!TeuniManager.TeuniSceneTutorial)
         {
-            Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Moved)
-            {
-                MoveObject(touch);
-            }
+            Popup.Show("트니 돌보기", "[ 상점 ]\n트니에게 맛있는 음식을 먹여볼까요?\r\n\n[ 샤워 ]\n트니가 더러워지면 안돼요!\n\n[ 냉장고 ]\n트니에게 줄 음식을 골라요");
+            TeuniManager.TeuniSceneTutorial = true;
         }
     }
-    */
 
     public void TestHpUp()
     {
         //TeuniInven.hp += 10;
         //TeuniHPSlider.value = (float) TeuniInven.hp / 100f;
         //UpdateSlider((int)TeuniInven.hp);
-        TeuniManager.Instance.UpdateHP(10);  //되는데???
-        Debug.Log(TeuniInven.hp);
+
+        //TeuniInven.UpdateHP(10);  //되는데???
+        //Debug.Log(TeuniInven.hp);
+        TeuniManager.Instance.UpdateHP(10);
+        Debug.Log(TeuniManager.Instance.Hp);
     }
 
     // 음식 선택 시 Feed 버튼 이미지 및 AR 프리팹 설정
@@ -146,7 +138,7 @@ public class GrowingUI : MonoBehaviour
             switch (index)
             {
                 case 0:
-                    if(TeuniInven.redFood <= 0)
+                    if(TeuniManager.Instance.RedFood <= 0)
                     {
                         Debug.Log("Not Enought Food!");
                         Popup.Show("음식이 부족합니다!");
@@ -154,7 +146,7 @@ public class GrowingUI : MonoBehaviour
                     }
                     break;
                 case 1:
-                    if (TeuniInven.greenFood <= 0)
+                    if (TeuniManager.Instance.GreenFood <= 0)
                     {
                         Debug.Log("음식이 부족합니다!");
                         Popup.Show("음식이 부족합니다!");
@@ -162,7 +154,7 @@ public class GrowingUI : MonoBehaviour
                     }
                     break;
                 case 2:
-                    if (TeuniInven.whiteFood <= 0)
+                    if (TeuniManager.Instance.WhiteFood <= 0)
                     {
                         Debug.Log("Not Enought Food!");
                         Popup.Show("음식이 부족합니다!");
@@ -170,7 +162,7 @@ public class GrowingUI : MonoBehaviour
                     }
                     break;
                 case 3:
-                    if (TeuniInven.yellowFood <= 0)
+                    if (TeuniManager.Instance.YellowFood <= 0)
                     {
                         Debug.Log("Not Enought Food!");
                         Popup.Show("음식이 부족합니다!");
@@ -192,9 +184,66 @@ public class GrowingUI : MonoBehaviour
     {
         if (selectedPrefab != null)
         {
+            // 음식 수량 확인
+            if (feedButtonImage.sprite == null)
+            {
+                Debug.LogError("No food selected for feeding!");
+                return;
+            }
+
+            // feedButtonImage.sprite와 foodImages 배열의 매칭 확인
+            for (int i = 0; i < foodImages.Length; i++)
+            {
+                if (feedButtonImage.sprite == foodImages[i])
+                {
+                    // 음식 수량 체크
+                    switch (i)
+                    {
+                        case 0: // Red Food
+                            if (TeuniManager.Instance.RedFood <= 0)
+                            {
+                                Debug.LogWarning("Not enough Red Food!");
+                                Popup.Show("음식이 부족합니다!");
+                                return;
+                            }
+                            break;
+                        case 1: // Green Food
+                            if (TeuniManager.Instance.GreenFood <= 0)
+                            {
+                                Debug.LogWarning("Not enough Green Food!");
+                                Popup.Show("음식이 부족합니다!");
+                                return;
+                            }
+                            break;
+                        case 2: // White Food
+                            if (TeuniManager.Instance.WhiteFood <= 0)
+                            {
+                                Debug.LogWarning("Not enough White Food!");
+                                Popup.Show("음식이 부족합니다!");
+                                return;
+                            }
+                            break;
+                        case 3: // Yellow Food
+                            if (TeuniManager.Instance.YellowFood <= 0)
+                            {
+                                Debug.LogWarning("Not enough Yellow Food!");
+                                Popup.Show("음식이 부족합니다!");
+                                return;
+                            }
+                            break;
+                        default:
+                            Debug.LogError("Invalid food index!");
+                            return;
+                    }
+                    break;
+                }
+            }
+
+            // 3D 오브젝트 생성
             Vector3 spawnPosition = Camera.main.transform.position + Camera.main.transform.forward * 0.5f;
             spawnedObject = Instantiate(selectedPrefab, spawnPosition, Quaternion.identity);
 
+            // 음식 감소 및 UI 업데이트
             UpdateFoodCount();
             UpdateUI();
         }
@@ -222,37 +271,37 @@ public class GrowingUI : MonoBehaviour
                 switch (i)
                 {
                     case 0: // Red Food
-                        if (TeuniInven.redFood > 0)
+                        if (TeuniManager.Instance.RedFood > 0)
                         {
-                            TeuniInven.redFood--;
-                            FoodColor = "Red";
+                            TeuniManager.Instance.RedFood--;
+                            TeuniManager.Instance.FoodColor = "Red";
                         }
                         else
                             Debug.LogWarning("Not enough Red Food!");
                         break;
                     case 1: // green Food
-                        if (TeuniInven.greenFood > 0)
+                        if (TeuniManager.Instance.GreenFood > 0)
                         {
-                            TeuniInven.greenFood--;
-                            FoodColor = "Green";
+                            TeuniManager.Instance.GreenFood--;
+                            TeuniManager.Instance.FoodColor = "Green";
                         }
                         else
                             Debug.LogWarning("Not enough Green Food!");
                         break;
                     case 2: // White Food
-                        if (TeuniInven.whiteFood > 0)
+                        if (TeuniManager.Instance.WhiteFood > 0)
                         {
-                            TeuniInven.whiteFood--;
-                            FoodColor = "White";
+                            TeuniManager.Instance.WhiteFood--;
+                            TeuniManager.Instance.FoodColor = "White";
                         }
                         else
                             Debug.LogWarning("Not enough White Food!");
                         break;
                     case 3: // Yellow Food
-                        if (TeuniInven.yellowFood > 0)
+                        if (TeuniManager.Instance.YellowFood > 0)
                         {
-                            TeuniInven.yellowFood--;
-                            FoodColor = "Yellow";
+                            TeuniManager.Instance.YellowFood--;
+                            TeuniManager.Instance.FoodColor = "Yellow";
                         }
                         else
                             Debug.LogWarning("Not enough Yellow Food!");
@@ -315,7 +364,7 @@ public class GrowingUI : MonoBehaviour
     public void ChangeScene(string SceneName) 
     //인스펙터에서 버튼 할당 X 버튼 onClick에서 함수 할당. 여러개의 HomeBtn에서 쓰기 위함
     {
-        SceneName = "SampleScene";
+        SceneName = "StartScene";
 
         if (!string.IsNullOrEmpty(SceneName))
         {
@@ -353,10 +402,10 @@ public class GrowingUI : MonoBehaviour
         switch (itemType)
         {
             case "Red":
-                if (TeuniInven.redCoin >= 5)
+                if (TeuniManager.Instance.RedCoin >= 5)
                 {
-                    TeuniInven.redCoin -= 5;
-                    TeuniInven.redFood += 1;
+                    TeuniManager.Instance.RedCoin -= 5;
+                    TeuniManager.Instance.RedFood += 1;
                 }
                 else
                 {
@@ -366,10 +415,10 @@ public class GrowingUI : MonoBehaviour
                 break;
 
             case "Yellow":
-                if (TeuniInven.yellowCoin >= 5)
+                if (TeuniManager.Instance.YellowCoin >= 5)
                 {
-                    TeuniInven.yellowCoin -= 5;
-                    TeuniInven.yellowFood += 1;
+                    TeuniManager.Instance.YellowCoin -= 5;
+                    TeuniManager.Instance.YellowFood += 1;
                 }
                 else
                 {
@@ -379,10 +428,10 @@ public class GrowingUI : MonoBehaviour
                 break;
 
             case "Green":
-                if (TeuniInven.greenCoin >= 5)
+                if (TeuniManager.Instance.GreenCoin >= 5)
                 {
-                    TeuniInven.greenCoin -= 5;
-                    TeuniInven.greenFood += 1;
+                    TeuniManager.Instance.GreenCoin -= 5;
+                    TeuniManager.Instance.GreenFood += 1;
                 }
                 else
                 {
@@ -392,10 +441,10 @@ public class GrowingUI : MonoBehaviour
                 break;
 
             case "White":
-                if (TeuniInven.whiteCoin >= 5)
+                if (TeuniManager.Instance.WhiteCoin >= 5)
                 {
-                    TeuniInven.whiteCoin -= 5;
-                    TeuniInven.whiteFood += 1;
+                    TeuniManager.Instance.WhiteCoin -= 5;
+                    TeuniManager.Instance.WhiteFood += 1;
                 }
                 else
                 {
@@ -416,15 +465,15 @@ public class GrowingUI : MonoBehaviour
     private void UpdateUI()
     {
         // 코인과 음식의 상태 업데이트
-        coinTexts[0].text = $"{TeuniInven.redCoin}";
-        coinTexts[1].text = $"{TeuniInven.whiteCoin}";
-        coinTexts[2].text = $"{TeuniInven.greenCoin}";
-        coinTexts[3].text = $"{TeuniInven.yellowCoin}";
+        coinTexts[0].text = $"{TeuniManager.Instance.RedCoin}";
+        coinTexts[1].text = $"{TeuniManager.Instance.WhiteCoin}";
+        coinTexts[2].text = $"{TeuniManager.Instance.GreenCoin}";
+        coinTexts[3].text = $"{TeuniManager.Instance.YellowCoin}";
 
-        foodTexts[0].text = $"{TeuniInven.redFood}";
-        foodTexts[1].text = $"{TeuniInven.whiteFood}";
-        foodTexts[2].text = $"{TeuniInven.greenFood}";
-        foodTexts[3].text = $"{TeuniInven.yellowFood}";
+        foodTexts[0].text = $"{TeuniManager.Instance.RedFood}";
+        foodTexts[1].text = $"{TeuniManager.Instance.WhiteFood}";
+        foodTexts[2].text = $"{TeuniManager.Instance.GreenFood}";
+        foodTexts[3].text = $"{TeuniManager.Instance.YellowFood}";
     }
 
     private void ChangeFeedImage(int index)
@@ -442,13 +491,13 @@ public class GrowingUI : MonoBehaviour
 
     private void OnEnable()
     {
-        
-        if (TeuniInven != null)
-        {
-            // HP 변경 이벤트 구독
-            TeuniInven.HPChanged += UpdateSlider;
-        }
-        
+
+        /*        if (TeuniInven != null)
+                {
+                    // HP 변경 이벤트 구독
+                    TeuniInven.HPChanged += UpdateSlider;
+                }*/
+        UpdateSlider((int)TeuniManager.Instance.Hp);
     }
     
     private void UpdateSlider(int currentHP)
@@ -457,5 +506,10 @@ public class GrowingUI : MonoBehaviour
         {
             TeuniHPSlider.value = currentHP / 100f;
         }
+    }
+
+    private void OnDestroy()
+    {
+        TeuniManager.Instance.HPChanged -= UpdateSlider;
     }
 }

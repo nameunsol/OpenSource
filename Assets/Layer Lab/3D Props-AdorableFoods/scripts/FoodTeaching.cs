@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using EasyUI.Popup;
 
 public class FoodTeaching : MonoBehaviour
 {
-    public TeuniInven TeuniInven;
+    //public TeuniInven TeuniInven;
 
     public Button HomeBtn; //홈 버튼
     public TextMeshProUGUI TeachingText;
@@ -32,6 +33,12 @@ public class FoodTeaching : MonoBehaviour
         // 초기 설정
         TeachingPrefab.SetActive(true);
         TeachingText.text = TeachTextArray[TNum];
+
+        if (!TeuniManager.EatingSceneTutorial)
+        {
+            Popup.Show("식사 화면", "골고루 먹으면 다양한 코인을 얻을 수 있어요!");
+            TeuniManager.EatingSceneTutorial = true;
+        }
     }
 
     private void OnNextButtonClick()

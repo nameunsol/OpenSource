@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using EasyUI.Popup;
+using UnityEngine.UI;
 
 public class FoodController : MonoBehaviour
 {
@@ -10,11 +11,11 @@ public class FoodController : MonoBehaviour
     private bool isDragging = false; // 드래그 중인지 여부
     private bool isPlaced = false; // 트니의 콜라이더 안에 위치했는지 여부
     private PlaceObjectOnPlane placeObjectOnPlane;
-    private TeuniManager teuniManager;
+    //private TeuniManager teuniManager;
 
     public ParticleSystem Eatting;
     public AudioSource EatSound;
-    public TeuniInven TeuniInven;
+    //public TeuniInven TeuniInven;
     public GrowingUI GrowingUI;
 
     void Start()
@@ -26,6 +27,19 @@ public class FoodController : MonoBehaviour
 
         // 오브젝트가 생성된 뒤 7초 후 소멸
         StartCoroutine(AutoDestroyAfterTime(10f));
+
+        //혜
+        TeuniManager.Instance.HPChanged += UpdateSlider;
+
+        GameObject uiObject = GameObject.Find("Growing_Canvas"); // Hierarchy에서 UI_Canvas라는 이름의 오브젝트
+        if (uiObject != null)
+        {
+            GrowingUI = uiObject.GetComponent<GrowingUI>();
+        }
+        else
+        {
+            Debug.LogError("UI_Canvas 오브젝트를 찾을 수 없습니다!");
+        }
     }
 
     void Update()
@@ -67,8 +81,8 @@ public class FoodController : MonoBehaviour
 
             // 트니의 위치에 맞춰 음식 위치 고정 (y축 0.3 올리고 앞으로 이동)
             Vector3 adjustedPosition = other.transform.position;
-            adjustedPosition.y += 0.23f; 
-            adjustedPosition += other.transform.forward * 0.35f; 
+            adjustedPosition.y += 0.23f;
+            adjustedPosition += other.transform.forward * 0.35f;
             transform.position = adjustedPosition;
             if (placeObjectOnPlane != null)
             {
@@ -84,8 +98,7 @@ public class FoodController : MonoBehaviour
             StartCoroutine(DestroyAfterDelay(3f));
 
             //혜: 여기서 HP 증가
-
-            //TeuniInven.EatFood(GrowingUI.FoodColor);
+            TeuniManager.Instance.EatFood(TeuniManager.Instance.FoodColor);
         }
     }
 
@@ -116,21 +129,38 @@ public class FoodController : MonoBehaviour
 
     private void OnEnable()
     {
-
-        if (TeuniInven != null)
+        if (GrowingUI == null)
         {
-            // HP 변경 이벤트 구독
-            TeuniInven.HPChanged += UpdateSlider;
-            GrowingUI.DebugText.text = TeuniInven.hp.ToString();
+            GrowingUI = FindObjectOfType<GrowingUI>();
+            if (GrowingUI == null)
+            {
+                Debug.LogError("GrowingUI is not assigned and could not be found in the scene.");
+                return;
+            }
         }
 
+        UpdateSlider((int)TeuniManager.Instance.Hp);
     }
 
     private void UpdateSlider(int currentHP)
     {
-        if (GrowingUI.TeuniHPSlider != null)
+        if (GrowingUI == null)
         {
-            GrowingUI.TeuniHPSlider.value = currentHP / 100f;
+            Debug.LogError("GrowingUI is not assigned.");
+            return;
         }
+
+        if (GrowingUI.TeuniHPSlider == null)
+        {
+            Debug.LogError("TeuniHPSlider is not assigned.");
+            return;
+        }
+
+        GrowingUI.TeuniHPSlider.value = currentHP / 100f;
+    }
+
+    private void OnDestroy()
+    {
+        TeuniManager.Instance.HPChanged -= UpdateSlider;
     }
 }

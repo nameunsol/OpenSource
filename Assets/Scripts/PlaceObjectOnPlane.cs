@@ -20,12 +20,8 @@ public class PlaceObjectOnPlane : MonoBehaviour
     private Animator spawnedAnimator;
     private bool isObjectPlaced = false;
     private Vector3 teuniScale = new Vector3(1f, 1f, 1f);
-    private bool isMax = true;
-
-    [HideInInspector]
+    public bool isMax = true;
     public bool isPoo = true;
-    [HideInInspector]
-    public bool isEvolution = true;
 
     private ARRaycastManager raycastManager; // AR Raycast Manager
     private List<ARRaycastHit> hits = new List<ARRaycastHit>(); // Raycast 결과 저장용 리스트
@@ -54,6 +50,17 @@ public class PlaceObjectOnPlane : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        // TeuniManager의 HP 변경 이벤트 구독
+        //TeuniManager.Instance.HPChanged += OnHPChanged;
+    }
+
+    private void OnHPChanged(int newHP)
+    {
+        UpdateObjectBasedOnHP();
+    }
+
     void Update()
     {
         if (Input.touchCount > 0)
@@ -69,8 +76,9 @@ public class PlaceObjectOnPlane : MonoBehaviour
         if (TeuniManager.Instance.Hp == 40 || TeuniManager.Instance.Hp == 50 || TeuniManager.Instance.Hp == 100)
         {
             UpdateObjectBasedOnHP();
+            Debug.Log("BasedOn");
         }
-
+        
         if (isObjectPlaced && timerActive)
         {
             timer += Time.deltaTime;
