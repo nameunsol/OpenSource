@@ -22,6 +22,9 @@ public class PlaceObjectOnPlane : MonoBehaviour
     private Vector3 teuniScale = new Vector3(1f, 1f, 1f);
     private bool isMax = true;
 
+    [HideInInspector]
+    public bool isPoo = true;
+
     private ARRaycastManager raycastManager; // AR Raycast Manager
     private List<ARRaycastHit> hits = new List<ARRaycastHit>(); // Raycast 결과 저장용 리스트
 
@@ -61,6 +64,11 @@ public class PlaceObjectOnPlane : MonoBehaviour
             }
         }
 
+        if (teuniHp.hp == 40 || teuniHp.hp == 50 || teuniHp.hp == 100)
+        {
+            UpdateObjectBasedOnHP();
+        }
+
         if (isObjectPlaced && timerActive)
         {
             timer += Time.deltaTime;
@@ -68,6 +76,7 @@ public class PlaceObjectOnPlane : MonoBehaviour
             // 타이머가 1분이 지나면 neutralPrefab을 현재 위치에 배치
             if (timer >= 60f)
             {
+                isPoo = true;
                 PlaceNeutralPrefab();
             }
         }
@@ -157,7 +166,7 @@ public class PlaceObjectOnPlane : MonoBehaviour
     // HP 상태에 따라 오브젝트를 업데이트하는 메서드
     public void UpdateObjectBasedOnHP()
     {
-        if (isObjectPlaced && spawnedObject != null)
+        if (isObjectPlaced && spawnedObject != null && !isPoo)
         {
             GameObject prefabToSpawn = GetPrefabBasedOnHP();
             SetPrefabScale();
@@ -171,6 +180,17 @@ public class PlaceObjectOnPlane : MonoBehaviour
                 spawnedAnimator = spawnedObject.GetComponent<Animator>();
                 Debug.Log("AR Object updated to: " + prefabToSpawn.name);
                 timerActive = true; 
+            }
+
+            if(teuniHp.hp == 100)
+            {
+                Destroy(spawnedObject);
+                SetPrefabScale();
+                spawnedObject = Instantiate(prefabToSpawn, spawnedObject.transform.position, spawnedObject.transform.rotation);
+                spawnedObject.transform.localScale = teuniScale;
+                spawnedAnimator = spawnedObject.GetComponent<Animator>();
+                Debug.Log("AR Object updated to: " + prefabToSpawn.name);
+                timerActive = true;
             }
         }
     }
@@ -192,6 +212,7 @@ public class PlaceObjectOnPlane : MonoBehaviour
                 Debug.Log("AR Object updated to: " + prefabToSpawn.name);
 
                 timerActive = true; 
+                isPoo = false;
             }
 
             ActivateBubblesByName();
@@ -254,6 +275,36 @@ public class PlaceObjectOnPlane : MonoBehaviour
         if (spawnedAnimator != null)
         {
             spawnedAnimator.SetTrigger(triggerName);
+        }
+    }
+
+    IEnumerator ChangeCharacterCor()
+    {
+        while(true)
+        {
+            if(teuniHp.hp < 50)
+            {
+                // 지우고 우는 애로 다시 Inst..
+
+            }
+
+
+            yield return null;
+        }
+    }
+
+    IEnumerator ChangeCharacterCor2()
+    {
+        while (true)
+        {
+            if (teuniHp.hp < 50)
+            {
+                // 지우고 우는 애로 다시 Inst..
+
+            }
+
+
+            yield return null;
         }
     }
 }
