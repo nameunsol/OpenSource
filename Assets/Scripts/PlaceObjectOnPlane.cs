@@ -17,6 +17,7 @@ public class PlaceObjectOnPlane : MonoBehaviour
     private List<ARRaycastHit> hits = new List<ARRaycastHit>(); // Raycast 결과 저장용 리스트
 
     private float hp = 100f; 
+    //public TeuniInven TeuniInven;
     private float timer = 0f;
     private bool timerActive = false; 
 

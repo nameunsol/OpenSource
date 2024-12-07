@@ -7,9 +7,10 @@ using Unity.VisualScripting;
 
 public class StartMenu : MonoBehaviour
 {
+    public TeuniInven TeuniInven;
+
     public Button StartBtn; //식사하기 버튼
     public Button TeuniBtn; //트니 키우기 창 이동 버튼
-    //private string EatingScene = "EatingScene"; //식사 ar 장면
     public Slider HPbar; //트니 HP
 
     // Start is called before the first frame update
@@ -19,12 +20,29 @@ public class StartMenu : MonoBehaviour
         TeuniBtn.onClick.AddListener(() => ChangeScene("GrowingScene")); //트니키우기씬
         HPbar.onValueChanged.AddListener(OnHPValueChanged);
         //트니 HP 변경 시 UI 반영
+
+        // 슬라이더 초기화
+        //HPbar.maxValue = TeuniInven.MaxHp; // 최대값 설정
+        TeuniInven.ResetData();
+        HPbar.value = TeuniInven.hp / TeuniInven.MaxHp;       // 현재값 설정
+        Debug.Log(TeuniInven.hp);
+        Debug.Log(TeuniInven.MaxHp);
+        Debug.Log(HPbar.value);
+
+        // HP 변경 시 UI 자동 업데이트
+        TeuniInven.HPChanged += UpdateHPBar;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void UpdateHPBar(int currentHP)
+    {
+        HPbar.value = currentHP; // HP 값을 슬라이더에 반영
     }
 
     public void ChangeScene(string SceneName)
@@ -42,5 +60,24 @@ public class StartMenu : MonoBehaviour
     void OnHPValueChanged(float value)
     {
         Debug.Log("ScrollBar Value: " + value);
+    }
+
+    private void OnEnable()
+    {
+
+        if (TeuniInven != null)
+        {
+            // HP 변경 이벤트 구독
+            TeuniInven.HPChanged += UpdateSlider;
+        }
+
+    }
+
+    private void UpdateSlider(int currentHP)
+    {
+        if (HPbar != null)
+        {
+            HPbar.value = currentHP / 100f;
+        }
     }
 }

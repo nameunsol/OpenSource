@@ -22,9 +22,13 @@ public class Cleaning : MonoBehaviour
     // PlaceObjectOnPlane 클래스의 인스턴스 참조 추가
     public PlaceObjectOnPlane placeObjectOnPlaneInstance;
 
+    public TeuniInven tData;
+
     void Start()
     {
         mainCamera = Camera.main;
+
+        Debug.Log($"Testcode num is: {TestCode.Instance.num}");
     }
 
     void Update()

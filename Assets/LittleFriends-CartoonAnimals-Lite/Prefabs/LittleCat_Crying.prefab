@@ -836,7 +836,7 @@ GameObject:
   - component: {fileID: 6954638382919580489}
   - component: {fileID: 7297315544742002318}
   - component: {fileID: 1495403519847921272}
-  - component: {fileID: 5635184233629432303}
+  - component: {fileID: 1979382954774411320}
   m_Layer: 0
   m_Name: LittleCat_Crying
   m_TagString: Teuni
@@ -926,7 +926,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
---- !u!54 &5635184233629432303
+--- !u!54 &1979382954774411320
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

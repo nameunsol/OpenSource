@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using EasyUI.Popup;
 
 public class FoodController : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class FoodController : MonoBehaviour
     public ParticleSystem Eatting;
     public AudioSource EatSound;
     public PlaceObjectOnPlane placeObjectOnPlane;
+    public TeuniInven TeuniInven;
+    public GrowingUI GrowingUI;
 
     void Start()
     {
@@ -68,10 +71,18 @@ public class FoodController : MonoBehaviour
             {
                 placeObjectOnPlane.PlayAnimation("Eat");
             }
+
             Eatting.transform.position = transform.position;
             EatSound.Play();
             Eatting.Play();
+            //TeuniInven.UpdateHP(10);
+            //TeuniInven.hp += 10;
+            //GrowingUI.DebugText.text = TeuniInven.hp.ToString();
             StartCoroutine(DestroyAfterDelay(3f));
+
+            //혜: 여기서 HP 증가
+
+            //TeuniInven.EatFood(GrowingUI.FoodColor);
         }
     }
 
@@ -85,6 +96,7 @@ public class FoodController : MonoBehaviour
         {
             placeObjectOnPlane.PlayAnimation("Jump");
         }
+
     }
 
     private IEnumerator AutoDestroyAfterTime(float time)
@@ -96,6 +108,26 @@ public class FoodController : MonoBehaviour
         {
             // 여기서 음식 수 다시 증가
             Destroy(gameObject);
+        }
+    }
+
+    private void OnEnable()
+    {
+
+        if (TeuniInven != null)
+        {
+            // HP 변경 이벤트 구독
+            TeuniInven.HPChanged += UpdateSlider;
+            GrowingUI.DebugText.text = TeuniInven.hp.ToString();
+        }
+
+    }
+
+    private void UpdateSlider(int currentHP)
+    {
+        if (GrowingUI.TeuniHPSlider != null)
+        {
+            GrowingUI.TeuniHPSlider.value = currentHP / 100f;
         }
     }
 }
