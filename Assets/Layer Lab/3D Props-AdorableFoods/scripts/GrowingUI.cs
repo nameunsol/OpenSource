@@ -134,7 +134,7 @@ public class GrowingUI : MonoBehaviour
         //TeuniInven.hp += 10;
         //TeuniHPSlider.value = (float) TeuniInven.hp / 100f;
         //UpdateSlider((int)TeuniInven.hp);
-        TeuniInven.UpdateHP(10);  //되는데???
+        TeuniManager.Instance.UpdateHP(10);  //되는데???
         Debug.Log(TeuniInven.hp);
     }
 

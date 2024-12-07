@@ -706,7 +706,8 @@ MonoBehaviour:
   happyPrefab: {fileID: 8560002619355314680, guid: ba87ae7a15f3428429d8b382e7556cb0, type: 3}
   sadPrefab: {fileID: 4739124216632825449, guid: a0b1c0afd0c1fa446b01fef3488c1240, type: 3}
   neutralPrefab: {fileID: 4714321022692944014, guid: 21304eaf71c81464aa4b9ef3b5665fce, type: 3}
-  teuniHp: {fileID: 11400000, guid: 3cef99d933176254db8555176aa75604, type: 2}
+  isPoo: 1
+  isEvolution: 1
 --- !u!4 &603693449
 Transform:
   m_ObjectHideFlags: 0

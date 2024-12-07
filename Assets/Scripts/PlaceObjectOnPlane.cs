@@ -14,8 +14,8 @@ public class PlaceObjectOnPlane : MonoBehaviour
 
     public GameObject happyPrefab; 
     public GameObject sadPrefab;   
-    public GameObject neutralPrefab; 
-    public TeuniInven teuniHp;
+    public GameObject neutralPrefab;
+
     private GameObject spawnedObject;
     private Animator spawnedAnimator;
     private bool isObjectPlaced = false;
@@ -24,6 +24,8 @@ public class PlaceObjectOnPlane : MonoBehaviour
 
     [HideInInspector]
     public bool isPoo = true;
+    [HideInInspector]
+    public bool isEvolution = true;
 
     private ARRaycastManager raycastManager; // AR Raycast Manager
     private List<ARRaycastHit> hits = new List<ARRaycastHit>(); // Raycast 결과 저장용 리스트
@@ -64,7 +66,7 @@ public class PlaceObjectOnPlane : MonoBehaviour
             }
         }
 
-        if (teuniHp.hp == 40 || teuniHp.hp == 50 || teuniHp.hp == 100)
+        if (TeuniManager.Instance.Hp == 40 || TeuniManager.Instance.Hp == 50 || TeuniManager.Instance.Hp == 100)
         {
             UpdateObjectBasedOnHP();
         }
@@ -122,18 +124,18 @@ public class PlaceObjectOnPlane : MonoBehaviour
     private GameObject GetPrefabBasedOnHP()
     {
         // HP 상태에 따라 프리팹 선택
-        return teuniHp.hp < 50 ? sadPrefab : happyPrefab;
+        return TeuniManager.Instance.Hp < 50 ? sadPrefab : happyPrefab;
     }
 
     private void SetPrefabScale()
     {
-        if (teuniHp.hp < 100)
+        if (TeuniManager.Instance.Hp < 100)
         {
             isMax = true;
             return;
         }
 
-        if (teuniHp.hp >= 100 && isMax)
+        if (TeuniManager.Instance.Hp >= 100 && isMax)
         {
             teuniScale *= 2f;
             isMax = false;
@@ -158,8 +160,8 @@ public class PlaceObjectOnPlane : MonoBehaviour
     // HP 변경 메서드 (외부에서 호출 가능)
     public void ChangeHP(float amount)
     {
-        teuniHp.hp += amount;
-        Debug.Log("HP changed to: " + teuniHp.hp);
+        TeuniManager.Instance.Hp += amount;
+        Debug.Log("HP changed to: " + TeuniManager.Instance.Hp);
         UpdateObjectBasedOnHP(); // HP 변경 시 오브젝트 업데이트
     }
 
@@ -174,23 +176,16 @@ public class PlaceObjectOnPlane : MonoBehaviour
             if (spawnedObject.name != prefabToSpawn.name + "(Clone)") 
             {
                 Destroy(spawnedObject);
-                SetPrefabScale();
-                spawnedObject = Instantiate(prefabToSpawn, spawnedObject.transform.position, spawnedObject.transform.rotation);
-                spawnedObject.transform.localScale = teuniScale;
-                spawnedAnimator = spawnedObject.GetComponent<Animator>();
-                Debug.Log("AR Object updated to: " + prefabToSpawn.name);
-                timerActive = true; 
-            }
-
-            if(teuniHp.hp == 100)
-            {
-                Destroy(spawnedObject);
-                SetPrefabScale();
                 spawnedObject = Instantiate(prefabToSpawn, spawnedObject.transform.position, spawnedObject.transform.rotation);
                 spawnedObject.transform.localScale = teuniScale;
                 spawnedAnimator = spawnedObject.GetComponent<Animator>();
                 Debug.Log("AR Object updated to: " + prefabToSpawn.name);
                 timerActive = true;
+            }
+
+            if(TeuniManager.Instance.Hp == 100)
+            {
+                spawnedObject.transform.localScale = teuniScale;
             }
         }
     }
@@ -275,36 +270,6 @@ public class PlaceObjectOnPlane : MonoBehaviour
         if (spawnedAnimator != null)
         {
             spawnedAnimator.SetTrigger(triggerName);
-        }
-    }
-
-    IEnumerator ChangeCharacterCor()
-    {
-        while(true)
-        {
-            if(teuniHp.hp < 50)
-            {
-                // 지우고 우는 애로 다시 Inst..
-
-            }
-
-
-            yield return null;
-        }
-    }
-
-    IEnumerator ChangeCharacterCor2()
-    {
-        while (true)
-        {
-            if (teuniHp.hp < 50)
-            {
-                // 지우고 우는 애로 다시 Inst..
-
-            }
-
-
-            yield return null;
         }
     }
 }

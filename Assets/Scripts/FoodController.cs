@@ -10,6 +10,7 @@ public class FoodController : MonoBehaviour
     private bool isDragging = false; // 드래그 중인지 여부
     private bool isPlaced = false; // 트니의 콜라이더 안에 위치했는지 여부
     private PlaceObjectOnPlane placeObjectOnPlane;
+    private TeuniManager teuniManager;
 
     public ParticleSystem Eatting;
     public AudioSource EatSound;
