@@ -6,23 +6,40 @@ using UnityEngine.XR.ARSubsystems;
 
 public class PlaceObjectOnPlane : MonoBehaviour
 {
+    private static PlaceObjectOnPlane instance;
+    public static PlaceObjectOnPlane Instance
+    {  
+        get { return instance; } 
+    }
+
     public GameObject happyPrefab; 
     public GameObject sadPrefab;   
     public GameObject neutralPrefab; 
+    public TeuniInven teuniHp;
     private GameObject spawnedObject;
     private Animator spawnedAnimator;
-    private bool isObjectPlaced = false; 
+    private bool isObjectPlaced = false;
+    private Vector3 teuniScale = new Vector3(1f, 1f, 1f);
+    private bool isMax = true;
 
     private ARRaycastManager raycastManager; // AR Raycast Manager
     private List<ARRaycastHit> hits = new List<ARRaycastHit>(); // Raycast 결과 저장용 리스트
 
-    private float hp = 100f; 
     //public TeuniInven TeuniInven;
     private float timer = 0f;
     private bool timerActive = false; 
 
     void Awake()
     {
+        if(null == instance)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+
         // ARRaycastManager 초기화
         raycastManager = FindObjectOfType<ARRaycastManager>();
 
@@ -73,9 +90,10 @@ public class PlaceObjectOnPlane : MonoBehaviour
             if (spawnedObject == null)
             {
                 GameObject prefabToSpawn = GetPrefabBasedOnHP();
-
+                SetPrefabScale();
                 // 오브젝트 생성 및 배치
                 spawnedObject = Instantiate(prefabToSpawn, hitPose.position, hitPose.rotation);
+                spawnedObject.transform.localScale = teuniScale;
                 spawnedAnimator = spawnedObject.GetComponent<Animator>();
 
                 // y축으로 180도 추가 회전
@@ -95,7 +113,22 @@ public class PlaceObjectOnPlane : MonoBehaviour
     private GameObject GetPrefabBasedOnHP()
     {
         // HP 상태에 따라 프리팹 선택
-        return hp < 50 ? sadPrefab : happyPrefab;
+        return teuniHp.hp < 50 ? sadPrefab : happyPrefab;
+    }
+
+    private void SetPrefabScale()
+    {
+        if (teuniHp.hp < 100)
+        {
+            isMax = true;
+            return;
+        }
+
+        if (teuniHp.hp >= 100 && isMax)
+        {
+            teuniScale *= 2f;
+            isMax = false;
+        }
     }
 
     private void PlaceNeutralPrefab()
@@ -104,7 +137,9 @@ public class PlaceObjectOnPlane : MonoBehaviour
         {
             Destroy(spawnedObject); 
         }
+        SetPrefabScale();
         spawnedObject = Instantiate(neutralPrefab, spawnedObject.transform.position, spawnedObject.transform.rotation);
+        spawnedObject.transform.localScale = teuniScale;
         spawnedAnimator = spawnedObject.GetComponent<Animator>();
         Debug.Log("Neutral prefab placed at: " + spawnedObject.transform.position);
         timer = 0f; 
@@ -114,8 +149,8 @@ public class PlaceObjectOnPlane : MonoBehaviour
     // HP 변경 메서드 (외부에서 호출 가능)
     public void ChangeHP(float amount)
     {
-        hp += amount;
-        Debug.Log("HP changed to: " + hp);
+        teuniHp.hp += amount;
+        Debug.Log("HP changed to: " + teuniHp.hp);
         UpdateObjectBasedOnHP(); // HP 변경 시 오브젝트 업데이트
     }
 
@@ -125,11 +160,14 @@ public class PlaceObjectOnPlane : MonoBehaviour
         if (isObjectPlaced && spawnedObject != null)
         {
             GameObject prefabToSpawn = GetPrefabBasedOnHP();
+            SetPrefabScale();
             // 현재 배치된 오브젝트와 새로운 오브젝트가 다르면 교체
             if (spawnedObject.name != prefabToSpawn.name + "(Clone)") 
             {
-                Destroy(spawnedObject); 
+                Destroy(spawnedObject);
+                SetPrefabScale();
                 spawnedObject = Instantiate(prefabToSpawn, spawnedObject.transform.position, spawnedObject.transform.rotation);
+                spawnedObject.transform.localScale = teuniScale;
                 spawnedAnimator = spawnedObject.GetComponent<Animator>();
                 Debug.Log("AR Object updated to: " + prefabToSpawn.name);
                 timerActive = true; 
@@ -146,8 +184,10 @@ public class PlaceObjectOnPlane : MonoBehaviour
             // neutralPrefab 상태라면 오브젝트를 무조건 교체
             if (spawnedObject.name == neutralPrefab.name + "(Clone)") 
             {
-                Destroy(spawnedObject); 
+                Destroy(spawnedObject);
+                SetPrefabScale();
                 spawnedObject = Instantiate(prefabToSpawn, spawnedObject.transform.position, spawnedObject.transform.rotation);
+                spawnedObject.transform.localScale = teuniScale;
                 spawnedAnimator = spawnedObject.GetComponent<Animator>();
                 Debug.Log("AR Object updated to: " + prefabToSpawn.name);
 

@@ -102,7 +102,7 @@ MonoBehaviour:
   Eatting: {fileID: 1894800032733073483}
   EatSound: {fileID: 1683288383793242155}
   placeObjectOnPlane: {fileID: 0}
-  TeuniInven: {fileID: 0}
+  TeuniInven: {fileID: 11400000, guid: 3cef99d933176254db8555176aa75604, type: 2}
   GrowingUI: {fileID: 0}
 --- !u!136 &6979286150699288988
 CapsuleCollider:

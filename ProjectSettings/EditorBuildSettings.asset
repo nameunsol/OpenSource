@@ -6,13 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Prefabs/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   - enabled: 1
-    path: Assets/Scenes/GrowingScene.unity
+    path: Assets/Prefabs/Scenes/GrowingScene.unity
     guid: 15a43eeba9daded429618d2b827fc1dd
   - enabled: 1
-    path: Assets/Scenes/EatingScene.unity
+    path: Assets/Prefabs/Scenes/EatingScene.unity
     guid: 90fd31d157efb7d439a18a21468ac2b5
   m_configObjects:
     UnityEditor.XR.ARCore.ARCoreSettings: {fileID: 11400000, guid: e619331a97b58d845806fc6eeb5752d8, type: 2}

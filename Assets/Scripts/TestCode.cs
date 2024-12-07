@@ -6,7 +6,7 @@ public class TestCode : MonoBehaviour
 {
     public static TestCode Instance;
 
-    public int num = 5;
+    public int num = 4;
     
     void Awake()
     {

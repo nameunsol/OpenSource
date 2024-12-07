@@ -9,16 +9,18 @@ public class FoodController : MonoBehaviour
     private Vector3 dragOffset; // 드래그 시작 시 오프셋
     private bool isDragging = false; // 드래그 중인지 여부
     private bool isPlaced = false; // 트니의 콜라이더 안에 위치했는지 여부
+    private PlaceObjectOnPlane placeObjectOnPlane;
 
     public ParticleSystem Eatting;
     public AudioSource EatSound;
-    public PlaceObjectOnPlane placeObjectOnPlane;
     public TeuniInven TeuniInven;
     public GrowingUI GrowingUI;
 
     void Start()
     {
         mainCamera = Camera.main;
+        placeObjectOnPlane = PlaceObjectOnPlane.Instance;
+
         Eatting.Stop();
 
         // 오브젝트가 생성된 뒤 7초 후 소멸

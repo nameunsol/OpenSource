@@ -18,17 +18,12 @@ public class Cleaning : MonoBehaviour
     private float dragDuration = 0f; 
 
     private HashSet<Vector3> bubblePositions = new HashSet<Vector3>(); // 이미 배치된 버블 위치 저장
-
-    // PlaceObjectOnPlane 클래스의 인스턴스 참조 추가
-    public PlaceObjectOnPlane placeObjectOnPlaneInstance;
-
-    public TeuniInven tData;
+    private PlaceObjectOnPlane placeObjectOnPlane;
 
     void Start()
     {
         mainCamera = Camera.main;
-
-        Debug.Log($"Testcode num is: {TestCode.Instance.num}");
+        placeObjectOnPlane = PlaceObjectOnPlane.Instance;
     }
 
     void Update()
@@ -47,7 +42,7 @@ public class Cleaning : MonoBehaviour
 
             if (activeClone.CompareTag("Soap") && dragDuration >= 1.5f)
             {
-                placeObjectOnPlaneInstance.UpdateObjectForCleaning();
+                placeObjectOnPlane.UpdateObjectForCleaning();
                 dragDuration = 0f;
             }
 
